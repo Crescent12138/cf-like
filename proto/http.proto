@@ -15,13 +15,15 @@
 // specific language governing permissions and limitations
 // under the License.
 
-syntax="proto2";
-package example;
-
+syntax="proto3";
+package suggest;
+import "proto/feed.proto";
 option cc_generic_services = true;
 
 message HttpRequest {};
-message HttpResponse {};
+message HttpResponse {
+   repeated Feed feedList= 1;
+};
 
 service HttpService {
   rpc Echo(HttpRequest) returns (HttpResponse);

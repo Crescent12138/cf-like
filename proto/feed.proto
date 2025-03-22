@@ -1,0 +1,11 @@
+
+syntax="proto3";
+package suggest;
+option cc_generic_services = true;
+message Feed{
+    string id = 1;
+    string url = 2;
+    string title = 3;
+    repeated string tag = 4;
+    int32 level = 5;
+};
