@@ -11,3 +11,8 @@
 /.vscode/
 
 compile_commands.json
+
+# Ignore npm like
+node_modules/
+package-lock.json
+package.json

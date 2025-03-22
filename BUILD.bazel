@@ -18,7 +18,7 @@
 
 _COPTS = [
     "-mavx2",
-    "-I" + (package_name() + "/src").strip("/"),  # NOTE: https://infobilibili.co/x/gdhbHg.
+    "-I" + (package_name() + "/src").strip("/"), 
 ]
 
 
