@@ -30,6 +30,7 @@ proto_library(
     name = "proto",
     srcs = [
         "proto/http.proto",
+        "proto/feed.proto",
     ],
     visibility = ["//visibility:public"],
 )
