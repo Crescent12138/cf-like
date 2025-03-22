@@ -16,7 +16,7 @@
 // under the License.
 
 syntax="proto2";
-package example;
+package suggest;
 
 option cc_generic_services = true;
 
