@@ -60,6 +60,7 @@ demo形态时的文件状态如下：
     └── util
 
 ```
+
 * bazel 前缀后缀相关均为bazel工具链。
 * config.json 设计为获取参数，作为全局文件仅读一次，减少硬编码改动。
 * proto 为protocbuff文件，用于生成结构化序列化格式进行数据传递（目前只用于结构体转json）
@@ -70,3 +71,4 @@ demo形态时的文件状态如下：
 * datatype为特化类型库，暂不需要。
 * constant为常量库。
 * strategy为算子库。
+
