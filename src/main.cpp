@@ -65,15 +65,19 @@ int main(int argc, char* argv[]) {
 
     // Generally you only need one Server.
     brpc::Server server;
-    brpc::ChannelOptions redis_options;
-    redis_options.protocol = brpc::PROTOCOL_REDIS;
-    brpc::Channel redis_channel;
-
-    // redis 测试中
-    // if (redis_channel.Init("0.0.0.0:6379", &redis_options) != 0) {  // 6379是redis-server的默认端口
-    //     LOG(ERROR) << "Fail to init channel to redis-server";
-    //     return -1;
-    // }
+    //redis
+    {
+        brpc::ChannelOptions redis_options;
+        redis_options.protocol = brpc::PROTOCOL_REDIS;
+        brpc::Channel redis_channel;
+          // redis 测试中
+        // if (redis_channel.Init("0.0.0.0:6379", &redis_options) != 0) {  // 6379是redis-server的默认端口
+        //     LOG(ERROR) << "Fail to init channel to redis-server";
+        //     return -1;
+        // }
+    }
+  
+  
 
     suggest::HttpServiceImpl http_svc;
     

@@ -60,13 +60,13 @@ demo形态时的文件状态如下：
     └── util
 
 ```
-bazel 前缀后缀相关均为bazel工具链。
-config.json 设计为获取参数，作为全局文件仅读一次，减少硬编码改动。
-proto 为protocbuff文件，用于生成结构化序列化格式进行数据传递（目前只用于结构体转json）
-src 为代码库。
-main.cpp 为启动函数
-handler 为主流程函数，后续逻辑链路均在该函数中实现。
-com为common库，用于存放基础模板和算子模板。
-datatype为特化类型库，暂不需要。
-constant为常量库。
-strategy为算子库。
+* bazel 前缀后缀相关均为bazel工具链。
+* config.json 设计为获取参数，作为全局文件仅读一次，减少硬编码改动。
+* proto 为protocbuff文件，用于生成结构化序列化格式进行数据传递（目前只用于结构体转json）
+* src 为代码库。
+* main.cpp 为启动函数
+* handler 为主流程函数，后续逻辑链路均在该函数中实现。
+* com为common库，用于存放基础模板和算子模板。
+* datatype为特化类型库，暂不需要。
+* constant为常量库。
+* strategy为算子库。
