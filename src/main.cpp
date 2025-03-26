@@ -11,7 +11,8 @@
 #include "proto/http.pb.h"
 #include "com/baseStrategy.h"
 #include "com/context.h"
-
+#include "data/cfProblems.h"
+#include "util/timeWheel.h"
 DEFINE_int32(port, 8010, "TCP Port of this server");
 DEFINE_int32(idle_timeout_s, -1, "Connection will be closed if there is no "
              "read/write operations during the last `idle_timeout_s'");
@@ -62,6 +63,11 @@ public:
 int main(int argc, char* argv[]) {
     // Parse gflags. We recommend you to use gflags as well.
     GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, true);
+
+    // init DataDict
+    TimeWheel time_wheel;
+    time_wheel.initTimeWheel();
+    time_wheel.createTimingEvent(200, suggest::cfProblemHandler.load);
 
     // Generally you only need one Server.
     brpc::Server server;
