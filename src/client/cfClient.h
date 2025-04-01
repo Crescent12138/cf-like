@@ -21,13 +21,15 @@ public:
             LOG(ERROR) << "error: parse codeforces error!!\n";
             status = base::EARLY_RETURN;
             return;
+        }else{
+            LOG(INFO) << "doc parse ok " ;
         }
         status = base::OK;
     }
 
     static base::Status Init() {
         options.protocol           = brpc::PROTOCOL_HTTP;  // or brpc::PROTOCOL_H2
-        options.timeout_ms         = 4000;
+        options.timeout_ms         = 8000;
         options.connect_timeout_ms = 1000;
         if (codeforce_channel.Init("https://codeforces.com" /*any url*/, &options) != 0) {
             LOG(ERROR) << "Fail to initialize codeforce_channel";
@@ -42,4 +44,6 @@ public:
     static brpc::ChannelOptions options;
     static brpc::Channel        codeforce_channel;
 };
+brpc::ChannelOptions CfClient::options;
+brpc::Channel        CfClient::codeforce_channel;
 }  // namespace suggest

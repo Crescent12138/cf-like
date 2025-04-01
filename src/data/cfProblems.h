@@ -6,7 +6,7 @@ namespace suggest {
     class CfProblems : public DictData<std::string, Feed>{
         public:
         CfProblems(){
-            CfClient client();
+            CfClient client{};
             // parse TODO
         }
     };

@@ -63,11 +63,12 @@ public:
 int main(int argc, char* argv[]) {
     // Parse gflags. We recommend you to use gflags as well.
     GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, true);
-
+    suggest::CfClient::Init();
     // init DataDict
     TimeWheel time_wheel;
     time_wheel.initTimeWheel();
-    time_wheel.createTimingEvent(200, suggest::cfProblemHandler.load);
+    // problemset 更新为一小时一次
+    time_wheel.createTimingEvent(1000*60*60, suggest::cfProblemHandler.load);
 
     // Generally you only need one Server.
     brpc::Server server;

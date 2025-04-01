@@ -53,7 +53,7 @@ void* TimeWheel::loopForInterval(void* arg) {
 // init TimeWheel's step and maxmin, which detemine the max period of this wheel
 void TimeWheel::initTimeWheel(int steps, int maxMin) {
     if (1000 % steps != 0) {
-        LOG(ERROR) << "steps wrong !!" << steps <<"\n";
+        LOG(ERROR) << "steps wrong !!" << steps;
         return;
     }
     m_steps           = steps;
@@ -63,7 +63,7 @@ void TimeWheel::initTimeWheel(int steps, int maxMin) {
     m_eventSlotList.resize(m_firstLevelCount + m_secondLevelCount + m_thirdLevelCount);
     int ret = pthread_create(&m_loopThread, NULL, loopForInterval, this);
     if (ret != 0) {
-        LOG(ERROR) << "create thread error:" << strerror(errno) <<"\n";
+        LOG(ERROR) << "create thread error:" << strerror(errno) ;
         return;
     }
     // pthread_join(m_loopThread, NULL);
@@ -72,10 +72,10 @@ void TimeWheel::initTimeWheel(int steps, int maxMin) {
 void TimeWheel::createTimingEvent(int interval, EventCallback_t callback) {
     if (interval < m_steps || interval % m_steps != 0
         || interval >= m_steps * m_firstLevelCount * m_secondLevelCount * m_thirdLevelCount) {
-        LOG(ERROR) << "invalid interval\n";
+        LOG(ERROR) << "invalid interval";
         return;
     }
-    LOG(INFO) << "start create event\n";
+    LOG(INFO) << "start create event";
     Event_t event  = {0};
     event.interval = interval;
     event.cb       = callback;
@@ -87,7 +87,7 @@ void TimeWheel::createTimingEvent(int interval, EventCallback_t callback) {
     // insert it to a slot of TimeWheel
     std::unique_lock<std::mutex> lock(m_mutex);
     insertEventToSlot(interval, event);
-    LOG(INFO) << "create event over\n";
+    LOG(INFO) << "create event over";
 }
 
 int TimeWheel::createEventId() {
