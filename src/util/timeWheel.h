@@ -25,7 +25,7 @@ class TimeWheel {
 public:
     TimeWheel();
 
-    void initTimeWheel(int steps = 100, int maxMin = 10);
+    void initTimeWheel(int steps = 1000, int maxMin = 1000);
     void createTimingEvent(int interval, EventCallback_t callback);
 
 public:

@@ -7,4 +7,8 @@ namespace suggest{
         public:
         base::Status Exec(Context *ctx) override;
     };
+    class MetricProcessor :public BaseStrategy{
+        public:
+        base::Status Exec(Context *ctx) override;
+    };
 }

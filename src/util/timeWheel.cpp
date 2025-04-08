@@ -88,6 +88,8 @@ void TimeWheel::createTimingEvent(int interval, EventCallback_t callback) {
     std::unique_lock<std::mutex> lock(m_mutex);
     insertEventToSlot(interval, event);
     LOG(INFO) << "create event over";
+    //预期先启动时启动一次
+    event.cb();
 }
 
 int TimeWheel::createEventId() {
