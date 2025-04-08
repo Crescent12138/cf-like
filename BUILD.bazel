@@ -21,6 +21,7 @@ load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile
 _COPTS = [
     "-mavx2",
     "-I" + (package_name() + "/src").strip("/"), 
+    '--std=c++17',
 ]
 
 
@@ -85,12 +86,6 @@ refresh_compile_commands(
     name = "refresh_compile_commands",
     # 指定目标 target 及其编译选项/参数（.bazelrc 中已有的参数/选项无需重复添加）
     targets = [
-      "//:cf-like",
-       ":cc_proto",
-        ":src",
-        "@apache_brpc//:brpc",
-        "@apache_brpc//:bthread",
-        "@apache_brpc//:bvar",
-        "@apache_brpc//:butil",
+      "//:cf-like"
     ],
 )

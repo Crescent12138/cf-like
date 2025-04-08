@@ -1,11 +1,7 @@
 Index:
   Background: Build
 
-CompileFlags:
-  Add: [-xc++, -Wall, -std=c++20]
-  Compiler: clang++
-  Remove:
-    - -fno-canonical-system-headers
+
 Diagnostics:
   ClangTidy:
     Add: ["*"]
