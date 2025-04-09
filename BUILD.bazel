@@ -20,8 +20,7 @@ load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile
 
 _COPTS = [
     "-mavx2",
-    "-I" + (package_name() + "/src").strip("/"), 
-    '--std=c++17',
+    "-I" + (package_name() + "/src").strip("/")
 ]
 
 
