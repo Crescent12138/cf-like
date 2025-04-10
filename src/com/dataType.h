@@ -7,10 +7,10 @@ class DictData {
 public:
     DictData(){};
     V find(const K& item){
-        return map[item];
+        return map_[item];
     }
     
 protected:
-    butil::FlatMap<K, V> map;
+    butil::FlatMap<K, V> map_;
 };
 }  // namespace suggest
