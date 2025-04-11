@@ -16,13 +16,12 @@
 # Thie empty BUILD.bazel file is required to make Bazel treat
 # this directory as a package.
 
+load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
+
 _COPTS = [
     "-mavx2",
-    "-I" + (package_name() + "/src").strip("/"), 
+    "-I" + (package_name() + "/src").strip("/")
 ]
-
-
-load("@hedron_compile_commands//:refresh_compile_commands.bzl", "refresh_compile_commands")
 
 
 # pb的编译
@@ -44,7 +43,11 @@ cc_proto_library(
 )
 cc_library(
     name = "src",
-    srcs = glob(["src/**/*.h","src/**/*.cpp"]),
+    srcs = glob(["src/*.cpp","src/**/*.cpp"]),
+    hdrs = glob([
+        "src/*.h",
+        "src/**/*.h",
+    ]),
     visibility = ["//visibility:public"],
     deps = [
         ":cc_proto",
@@ -81,7 +84,7 @@ cc_binary(
 refresh_compile_commands(
     name = "refresh_compile_commands",
     # 指定目标 target 及其编译选项/参数（.bazelrc 中已有的参数/选项无需重复添加）
-    targets = {
-      "//:cf-like": ""
-    },
+    targets = [
+      "//:cf-like"
+    ],
 )

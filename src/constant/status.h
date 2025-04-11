@@ -4,6 +4,7 @@ namespace base{
         OK,
         EARLY_RETURN,
         HTTP_ERROR,
+        UNKNOWN,
         STATUS_NUM
     };
 }

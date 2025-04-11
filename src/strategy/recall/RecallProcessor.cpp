@@ -15,6 +15,7 @@ namespace suggest {
         brpc::ChannelOptions options;
         options.protocol = brpc::PROTOCOL_HTTP;  // or brpc::PROTOCOL_H2
         options.timeout_ms = 4000;
+        options.connect_timeout_ms = 4000;
         brpc::Channel codeforce_channel;
         if (codeforce_channel.Init("https://codeforces.com" /*any url*/, &options) != 0) {
             LOG(ERROR) << "Fail to initialize codeforce_channel";
