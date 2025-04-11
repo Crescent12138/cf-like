@@ -13,6 +13,7 @@
 #include "com/context.h"
 #include "data/cfProblems.h"
 #include "util/timeWheel.h"
+#include "util/jsonUtils.h"
 DEFINE_int32(port, 8010, "TCP Port of this server");
 DEFINE_int32(idle_timeout_s, -1, "Connection will be closed if there is no "
              "read/write operations during the last `idle_timeout_s'");
@@ -47,13 +48,10 @@ public:
         cntl->http_response().set_content_type("text/plain");
         butil::IOBufBuilder os;
         // 目前是把 queries 和 body写入返回结果。
-        os << "queries:";
-        for (brpc::URI::QueryIterator it = cntl->http_request().uri().QueryBegin();
-                it != cntl->http_request().uri().QueryEnd(); ++it) {
-            os << ' ' << it->first << '=' << it->second;
-        }
-        os << "\nbody: " << cntl->request_attachment() << '\n';
-        os << resp.DebugString();
+        std::string json_str;
+        utils::pb_2_json(resp, json_str);
+        // resp.SerializeToString(&json_str);
+        os << json_str;
         os.move_to(cntl->response_attachment());
     }
 };

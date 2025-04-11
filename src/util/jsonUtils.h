@@ -2,9 +2,15 @@
 #include <stdlib.h>
 #include <cstdlib>
 #include <json2pb/rapidjson.h>
-
+#include <google/protobuf/util/json_util.h>
 namespace utils {
-
+static void pb_2_json(const google::protobuf::Message& message, std::string& json){
+    google::protobuf::util::JsonPrintOptions options;
+    options.add_whitespace = true;
+    options.always_print_primitive_fields = true;
+    options.preserve_proto_field_names = true;
+    google::protobuf::util::MessageToJsonString(message, &json, options);
+}
 // static int get_rapidjson_string(butil::rapidjson::Document& js_in,  std::string key, std::string& value) {
 
 //     if (!js_in.HasMember(key) && js_in[key].IsString()) {
