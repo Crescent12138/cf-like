@@ -38,14 +38,19 @@ public:
         brpc::Controller* cntl =
             static_cast<brpc::Controller*>(cntl_base);
         HttpResponse resp;
+        butil::IOBufBuilder os;
+
         Context ctx(req, &resp);
+        ctx.resp_->set_rating(ctx.rating); 
         SuggestServer server;
         server.Init(&ctx);
         server.Exec(&ctx);
         // Fill response.
         cntl->http_response().set_content_type("text/plain");
-        butil::IOBufBuilder os;
         // 目前是把 queries 和 body写入返回结果。
+        os << cntl->request_attachment().to_string() << "\n";
+        LOG(INFO) << "Request: " << cntl->request_attachment().to_string();
+        // os << ctx.rating << "\n";
         os << "queries:";
         for (brpc::URI::QueryIterator it = cntl->http_request().uri().QueryBegin();
                 it != cntl->http_request().uri().QueryEnd(); ++it) {
@@ -76,8 +81,6 @@ int main(int argc, char* argv[]) {
         //     return -1;
         // }
     }
-  
-  
 
     suggest::HttpServiceImpl http_svc;
     
