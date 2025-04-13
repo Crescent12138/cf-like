@@ -52,6 +52,7 @@ public:
         utils::pb_2_json(resp, json_str);
         // resp.SerializeToString(&json_str);
         os << json_str;
+        os << cntl->request_attachment().to_string();
         os.move_to(cntl->response_attachment());
     }
 };
