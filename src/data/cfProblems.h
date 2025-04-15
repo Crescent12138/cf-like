@@ -15,7 +15,8 @@ public:
         std::string status;
         int         code = 0;
         auto       &doc  = client.doc;
-        if (CHECK_JSON_FIELD(doc, "status", String)) {
+
+        if (doc.HasMember("status") && doc["status"].IsString()) {
             std::string status = doc["status"].GetString();
             if (status != std::string("OK")) {
                 LOG(ERROR) << "status :" << doc["status"].GetString();
@@ -44,6 +45,7 @@ public:
                     for(auto &tag: tags){
                         feed.add_tag(tag);
                     }
+
                     map_[feed.id()] = feed;
                     problemList.emplace_back(std::make_shared<Feed>(feed));
                 }
