@@ -1,5 +1,3 @@
-
-
 #include <gflags/gflags.h>
 #include <butil/logging.h>
 #include <brpc/server.h>
@@ -41,16 +39,17 @@ public:
             static_cast<brpc::Controller*>(cntl_base);
         HttpResponse resp;
         butil::IOBufBuilder os;
-
+       
         Context ctx(req, &resp);
-        ctx.resp_->set_rating(ctx.rating); 
+        ctx.query = cntl->request_attachment().to_string();
+
         SuggestServer server;
         server.Init(&ctx);
         server.Exec(&ctx);
         // Fill response.
         cntl->http_response().set_content_type("text/plain");
         // 目前是把 queries 和 body写入返回结果。
-        LOG(INFO) << "Request: " << cntl->request_attachment().to_string();
+        //LOG(INFO) << "Request: " << cntl->request_attachment().to_string();
         std::string json_str;
         utils::pb_2_json(resp, json_str);
         // resp.SerializeToString(&json_str);

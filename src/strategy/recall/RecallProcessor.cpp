@@ -10,7 +10,7 @@
 
 #define VALIDATE_PROBLEM_FIELD(problem, field, check_type, index) \
     do { \
-        if (!(problem).HasMember(field) || !(problem)[field].check_type()) { \
+        if ((!(problem).HasMember(field)) || (!(problem)[field].check_type())) { \
             LOG(WARNING) << "Invalid " #field " in problem at index: " << index; \
             continue; \
         } \
@@ -79,48 +79,65 @@ namespace suggest {
                         LOG(ERROR) << "Empty problems data";
                         return base::Status::OK;
                     }
+
+                    LOG(INFO) << "Request1: " << ctx->query << "\n";
+
+                    butil::rapidjson::Document query_doc;
+                    int user_rating = 0;
+                    if (query_doc.Parse(ctx->query.c_str()).HasParseError()) {
+                        LOG(ERROR) << "Failed to parse query JSON";
+                    }
+                    else {
+                        if (!query_doc.HasMember("rating") || !query_doc["rating"].IsInt()) {
+                            LOG(ERROR) << "Missing or invalid rating in query";
+                        }
+                        else user_rating = query_doc["rating"].GetInt();
+                    }
+            
+                    LOG(INFO) << "User rating: " << user_rating << "\n";
+
+                    std::vector<size_t> valid_indices;
+                    for (size_t i = 0; i < problem_count; ++i) {
+                        const auto& problem = problems[i];
+
+                        // 校验必须字段
+                        VALIDATE_PROBLEM_FIELD(problem, "name", IsString, i);
+                        VALIDATE_PROBLEM_FIELD(problem, "contestId", IsInt, i);
+                        VALIDATE_PROBLEM_FIELD(problem, "index", IsString, i);
+                        VALIDATE_PROBLEM_FIELD(problem, "rating", IsInt, i);
+
+                        int problem_rating = problem["rating"].GetInt();
+                        if (problem_rating >= (user_rating - 300) && problem_rating <= (user_rating + 300)) {
+                            valid_indices.push_back(i);
+                        }
+                    }
+
+                    if (valid_indices.empty()) {
+                        LOG(WARNING)<<"No problems found within rating range";
+                        return base::Status::OK;
+                    }
         
                     // 从配置获取随机数量
                     const int k = 5; 
-                    const int select_count = std::clamp(k, 1, problem_count);
+                    const int select_count = std::min(k, static_cast<int>(valid_indices.size()));
         
                     // 生成随机索引
-                    std::vector<size_t> indices(problem_count);
+                    std::vector<size_t> indices(valid_indices.size());
                     std::iota(indices.begin(), indices.end(), 0);
                     
                     // 部分洗牌算法
                     std::random_device rd;
                     std::mt19937 rng(rd());
                     for (int i = 0; i < select_count; ++i) {
-                        std::uniform_int_distribution<size_t> dist(i, problem_count - 1);
+                        std::uniform_int_distribution<size_t> dist(i, valid_indices.size() - 1);
                         size_t j = dist(rng);
                         std::swap(indices[i], indices[j]);
                     }
         
                     // 填充结果
                     for (int i = 0; i < select_count; ++i) {
-                        const auto& problem = problems[indices[i]];
-                        const size_t current_index = indices[i];
-                        // if (!problem.HasMember("name") || !problem["name"].IsString()) {
-                        //     LOG(WARNING) << "Invalid problem at index: " << indices[i];
-                        //     continue;
-                        // }
-
-                        // if (!problem.HasMember("contestId") || !problem["contestId"].IsInt()) {
-                        //     LOG(WARNING) << "Invalid problem at index: " << indices[i];
-                        //     continue;
-                        // }
-
-                        // if (!problem.HasMember("index") || !problem["index"].IsString()) {
-                        //     LOG(WARNING) << "Invalid problem at index: " << indices[i];
-                        //     continue;
-                        // }
-
-                        // 校验必须字段
-                        VALIDATE_PROBLEM_FIELD(problem, "name", IsString, current_index);
-                        VALIDATE_PROBLEM_FIELD(problem, "contestId", IsInt, current_index);
-                        VALIDATE_PROBLEM_FIELD(problem, "index", IsString, current_index);
-
+                        const auto& problem = problems[valid_indices[indices[i]]];
+                        
                         const int contest_id = problem["contestId"].GetInt();
                         const std::string index = problem["index"].GetString();
                         const std::string full_id = std::to_string(contest_id) + index;
@@ -128,7 +145,6 @@ namespace suggest {
                         auto* feed = ctx->resp_->mutable_feedlist()->Add();
                         feed->set_title(problem["name"].GetString());
                         feed->set_id(full_id);
-                        //feed->set_id(problem["contestId"].GetString());
                     }
                 }
             }

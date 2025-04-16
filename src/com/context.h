@@ -7,6 +7,7 @@ class Context {
     const HttpRequest* req_;
     HttpResponse * resp_;
     int rating;
+    std::string query;
     std::string name ;
 };
 } // namespace suggest
