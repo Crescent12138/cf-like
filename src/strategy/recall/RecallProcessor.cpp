@@ -8,13 +8,26 @@
 #include <random>   // 用于随机数生成
 #include <numeric>  // 用于iota函数
 
-#define VALIDATE_PROBLEM_FIELD(problem, field, check_type, index) \
-    do { \
-        if ((!(problem).HasMember(field)) || (!(problem)[field].check_type())) { \
-            LOG(WARNING) << "Invalid " #field " in problem at index: " << index; \
-            continue; \
-        } \
-    } while(0)
+// #define VALIDATE_PROBLEM_FIELD(problem, field, check_type, index) \
+//     do { \
+//         if ((!(problem).HasMember(field)) || (!(problem)[field].check_type())) { \
+//             LOG(WARNING) << "Invalid " #field " in problem at index: " << index; \
+//             continue; \
+//         } \
+//     } while(0)
+
+bool ValidateProblemField(
+    const butil::rapidjson::Value& problem,
+    const char* field,
+    bool (butil::rapidjson::Value::*checkFunc)() const,
+    size_t index) 
+{
+    if (!problem.HasMember(field) || !(problem[field].*checkFunc)()) {
+        //LOG(WARNING) << "Invalid " << field << " in problem at index: " << index;
+        return false;
+    }
+    return true;
+}
 
 namespace suggest {
     base::Status RecallProcessor::Exec(Context *ctx) {
@@ -26,8 +39,8 @@ namespace suggest {
     
         brpc::ChannelOptions options;
         options.protocol = brpc::PROTOCOL_HTTP;  // or brpc::PROTOCOL_H2
-        options.timeout_ms = 4000;
-        options.connect_timeout_ms = 4000;
+        options.timeout_ms = 15000;
+        options.connect_timeout_ms = 5000;
         brpc::Channel codeforce_channel;
         if (codeforce_channel.Init("https://codeforces.com" /*any url*/, &options) != 0) {
             LOG(ERROR) << "Fail to initialize codeforce_channel";
@@ -100,11 +113,18 @@ namespace suggest {
                     for (size_t i = 0; i < problem_count; ++i) {
                         const auto& problem = problems[i];
 
+                        // 先检查是否是对象类型
+                        if (!problem.IsObject()) {
+                        LOG(WARNING) << "Problem at index " << i << " is not an object";
+                        continue;
+                        }
+
                         // 校验必须字段
-                        VALIDATE_PROBLEM_FIELD(problem, "name", IsString, i);
-                        VALIDATE_PROBLEM_FIELD(problem, "contestId", IsInt, i);
-                        VALIDATE_PROBLEM_FIELD(problem, "index", IsString, i);
-                        VALIDATE_PROBLEM_FIELD(problem, "rating", IsInt, i);
+                        if (!ValidateProblemField(problem, "name", &butil::rapidjson::Value::IsString, i) ||
+                        !ValidateProblemField(problem, "contestId", &butil::rapidjson::Value::IsInt, i) ||
+                        !ValidateProblemField(problem, "index", &butil::rapidjson::Value::IsString, i) ||
+                        !ValidateProblemField(problem, "rating", &butil::rapidjson::Value::IsInt, i)) 
+                            continue;  // 任意字段校验失败则跳过
 
                         int problem_rating = problem["rating"].GetInt();
                         if (problem_rating >= (user_rating - 300) && problem_rating <= (user_rating + 300)) {
