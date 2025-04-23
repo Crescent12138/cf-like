@@ -23,6 +23,7 @@ option cc_generic_services = true;
 message HttpRequest {};
 message HttpResponse {
    repeated Feed feedList= 1;
+   int32 rating = 2;
 };
 
 service HttpService {
