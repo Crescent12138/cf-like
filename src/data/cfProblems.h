@@ -15,14 +15,13 @@ public:
         std::string status;
         int         code = 0;
         auto       &doc  = client.doc;
-
         if (doc.HasMember("status") && doc["status"].IsString()) {
             std::string status = doc["status"].GetString();
             if (status != std::string("OK")) {
                 LOG(ERROR) << "status :" << doc["status"].GetString();
                 return;
             }
-            if (CHECK_JSON_FIELD(doc, "result", Object) && CHECK_JSON_FIELD(doc["result"], "problems", Array)) {
+            if (doc.HasMember("result") && doc["result"].HasMember("problems")) {
                 auto &problems = doc["result"]["problems"];
                 if (problems.Size() > 0) {
                     LOG(INFO) << "size :" << problems.Size();
@@ -45,15 +44,26 @@ public:
                     for(auto &tag: tags){
                         feed.add_tag(tag);
                     }
-
+                    const std::string problem_url =
+                    "https://codeforces.com/problemset/problem/" + std::to_string(contestId) + "/" + index;
+                    feed.set_url(problem_url);
                     map_[feed.id()] = feed;
                     problemList.emplace_back(std::make_shared<Feed>(feed));
                 }
                 if (map_.size() > 0) {
                     LOG(INFO) << "problems_map_size :" << map_.size();
+                }else{
+                    LOG(WARNING) << "problems_Map is empty!!!";
                 }
+            }else{
+                LOG(WARNING) << "warning with cf-problem-result!!!";
             }
+        }else{
+            LOG(WARNING) << "warning with cf-problem";
         }
+    }
+    std::vector<std::shared_ptr<Feed>>& GetProblems(){
+        return problemList;
     }
 private:
 std::vector<std::shared_ptr<Feed>> problemList;
@@ -70,5 +80,4 @@ public:
 };
 
 static CfProblemHandler     cfProblemHandler;
-std::shared_ptr<CfProblems> CfProblemHandler::list_ptr = nullptr;
 }  // namespace suggest
