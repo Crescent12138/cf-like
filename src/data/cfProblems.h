@@ -40,7 +40,7 @@ public:
                     utils::get_rapidjon_vector_string(problems[i], "tags", tags);
                     feed.set_id(std::to_string(contestId).append(index));
                     feed.set_title(name);
-                    feed.set_level(rating);
+                    feed.set_rating(rating);
                     for(auto &tag: tags){
                         feed.add_tag(tag);
                     }
