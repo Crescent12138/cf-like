@@ -1,3 +1,4 @@
+#pragma once
 #include <brpc/channel.h>
 #include <butil/logging.h>
 #include <json2pb/rapidjson.h>
@@ -29,8 +30,8 @@ public:
 
     static base::Status Init() {
         options.protocol           = brpc::PROTOCOL_HTTP;  // or brpc::PROTOCOL_H2
-        options.timeout_ms         = 8000;
-        options.connect_timeout_ms = 1000;
+        options.timeout_ms         = 10000;
+        options.connect_timeout_ms = 3000;
         if (codeforce_channel.Init("https://codeforces.com" /*any url*/, &options) != 0) {
             LOG(ERROR) << "Fail to initialize codeforce_channel";
             return base::Status::HTTP_ERROR;
@@ -44,6 +45,5 @@ public:
     static brpc::ChannelOptions options;
     static brpc::Channel        codeforce_channel;
 };
-brpc::ChannelOptions CfClient::options;
-brpc::Channel        CfClient::codeforce_channel;
+
 }  // namespace suggest
