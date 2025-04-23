@@ -34,7 +34,7 @@ base::Status RecallProcessor::Exec(Context* ctx) {
     // 3. 截断500
     // 4. 随机若干个并输出
     butil::rapidjson::Document query_doc;
-    int                        user_rating = 0;
+    int                        user_rating = 1100;
     if (query_doc.Parse(ctx->query.c_str()).HasParseError()) {
         LOG(ERROR) << "Failed to parse query JSON";
     } else {
