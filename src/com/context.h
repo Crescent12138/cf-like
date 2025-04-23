@@ -10,9 +10,6 @@ class Context {
     int rating;
     std::string query;
     std::string name ;
-<<<<<<< HEAD
-=======
     std::shared_ptr<CfProblems> cf_problems;
->>>>>>> origin/main
 };
 } // namespace suggest
