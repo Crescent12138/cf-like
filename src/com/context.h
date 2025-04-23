@@ -1,13 +1,18 @@
 #pragma once
 #include "baseStrategy.h"
+#include "data/cfProblems.h"
 namespace suggest {
 class Context {
     public:
-    Context(const HttpRequest* req, HttpResponse *rep): req_(req), resp_(rep){}
+    Context(const HttpRequest* req, HttpResponse *rep): req_(req), resp_(rep),cf_problems(CfProblemHandler::list_ptr){}
     const HttpRequest* req_;
     HttpResponse * resp_;
     int rating;
     std::string query;
     std::string name ;
+<<<<<<< HEAD
+=======
+    std::shared_ptr<CfProblems> cf_problems;
+>>>>>>> origin/main
 };
 } // namespace suggest
