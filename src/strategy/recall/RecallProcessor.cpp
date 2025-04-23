@@ -160,11 +160,16 @@ namespace suggest {
                         
                         const int contest_id = problem["contestId"].GetInt();
                         const std::string index = problem["index"].GetString();
+                        const int Rating = problem["rating"].GetInt();
                         const std::string full_id = std::to_string(contest_id) + index;
+                        const std::string problem_url = "https://codeforces.com/problemset/problem/" + 
+                                                        std::to_string(contest_id) + "/" + index;
                         
                         auto* feed = ctx->resp_->mutable_feedlist()->Add();
                         feed->set_title(problem["name"].GetString());
                         feed->set_id(full_id);
+                        feed->set_rating(Rating);
+                        feed->set_url(problem_url);  
                     }
                 }
             }
