@@ -57,6 +57,33 @@ public:
 
         os.move_to(cntl->response_attachment());
     }
+    void TeamFeed(google::protobuf::RpcController* cntl_base,
+        const HttpRequest* req,
+        HttpResponse* ,
+        google::protobuf::Closure* done){
+            brpc::ClosureGuard done_guard(done);
+        
+            brpc::Controller* cntl =
+                static_cast<brpc::Controller*>(cntl_base);
+            HttpResponse resp;
+            butil::IOBufBuilder os;
+           
+            Context ctx(req, &resp);
+            ctx.query = cntl->request_attachment().to_string();
+    
+            SuggestServer server;
+            server.Init(&ctx);
+            server.Exec(&ctx);
+            // Fill response.
+            cntl->http_response().set_content_type("text/plain");
+            // 目前是把 queries 和 body写入返回结果。
+            //LOG(INFO) << "Request: " << cntl->request_attachment().to_string();
+            std::string json_str;
+            utils::pb_2_json(resp, json_str);
+            // resp.SerializeToString(&json_str);
+            os << json_str;
+            os.move_to(cntl->response_attachment());
+        }
 };
 
 }  // namespace suggest
