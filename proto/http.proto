@@ -28,7 +28,7 @@ message HttpResponse {
 
 service HttpService {
   rpc Echo(HttpRequest) returns (HttpResponse);
-  rpc EchoProtobuf(HttpRequest) returns (HttpResponse);
+  rpc TeamFeed(HttpRequest) returns (HttpResponse);
 };
 
 service FileService {
