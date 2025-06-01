@@ -9,4 +9,5 @@ message Feed{
     repeated string tag = 4;
     int32 rating = 5;
     int32 level = 6;
+    int32 solved = 7;
 };
