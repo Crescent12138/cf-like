@@ -13,6 +13,7 @@
 #include "constant/status.h"
 #include "strategy/strategy.h"
 #include "data/cfProblems.h"
+#include "util/cfProblemJsonReader.h"  // 新增JSON读取工具类
 
 // #define VALIDATE_PROBLEM_FIELD(problem, field, check_type, index) \
 //     do { \
@@ -49,11 +50,34 @@ base::Status RecallProcessor::Exec(Context* ctx) {
             user_rating = query_doc["rating"].GetInt();
     }
     user_rating = user_rating/100*100; // 将rating归一化到100的倍数
-    auto                problem_list = ctx->cf_problems->GetProblems();
+    
+    // 方式1：使用现有的CfProblems（推荐，因为已有缓存机制）
+    //auto problem_list = ctx->cf_problems->GetProblems();
+    
+    // 方式2：直接从JSON文件读取（可选）
+    auto problem_list = CfProblemJsonReader::LoadAllProblems();
+    
+    // 方式3：使用工具类的过滤功能进行预过滤（可选）
+    // auto all_problems = CfProblemJsonReader::LoadAllProblems();
+    // auto problem_list = CfProblemJsonReader::FilterByRating(
+    //     all_problems, user_rating - 300, user_rating + 300);
+
+    // 获取用户名
+    // std::string username;
+    // if (query_doc.HasMember("username") && query_doc["username"].IsString()) {
+    //     username = query_doc["username"].GetString();
+    // } else {
+    //     LOG(ERROR) << "Missing or invalid username in query";
+    //     return base::Status::INVALID_ARGUMENT;
+    // }
+
+    // 获取用户已解决的题目集合
+    // const auto& solved_problems = ctx->solved_problems->GetUserSolvedProblems(username);
 
     std::vector<size_t> candidates;
     for (size_t i=0;i<problem_list.size();i++) {
         const auto& problem = problem_list[i];
+        // 检查题目是否在用户的评分范围内且未被解决
         if (problem->rating() >= (user_rating - 300) && 
             problem->rating() <= (user_rating + 300)) {
             candidates.push_back(i);

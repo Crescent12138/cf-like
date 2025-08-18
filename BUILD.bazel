@@ -81,6 +81,24 @@ cc_binary(
 
 )
 
+# Demo程序来展示JSON工具类的使用
+cc_binary(
+    name = "demo_json_reader",
+    srcs = [
+        "demo_json_reader.cpp",  
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":cc_proto",
+        ":src",
+        "@apache_brpc//:brpc",
+        "@apache_brpc//:bthread",
+        "@apache_brpc//:bvar",
+        "@apache_brpc//:butil",
+    ],
+    copts = _COPTS
+)
+
 refresh_compile_commands(
     name = "refresh_compile_commands",
     # 指定目标 target 及其编译选项/参数（.bazelrc 中已有的参数/选项无需重复添加）

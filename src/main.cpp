@@ -94,9 +94,18 @@ int main(int argc, char* argv[]) {
     suggest::CfClient::Init();
     // init DataDict
     TimeWheel time_wheel;
-    time_wheel.initTimeWheel();
-    // problemset 更新为一小时一次
-    time_wheel.createTimingEvent(1000*60*60, suggest::cfProblemHandler.load);
+    time_wheel.initTimeWheel(1000, 1440); // 1秒步长，120分钟(2小时)最大周期
+    
+    // 立即加载一次数据
+    suggest::cfProblemHandler.load();
+    
+    // 暂时注释掉定时任务，避免时间轮配置问题
+    // problemset 更新改为2小时一次，避免频繁请求CF API (2*60*60*1000 = 7200000ms)
+    // 必须是steps(1000)的倍数，所以使用7200000
+    
+    time_wheel.createTimingEvent(86400000, suggest::cfProblemHandler.forceRefresh);
+
+    // time_wheel.createTimingEvent(7200000, suggest::cfProblemHandler.forceRefresh);
 
     // Generally you only need one Server.
     brpc::Server server;
