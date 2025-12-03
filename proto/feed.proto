@@ -10,4 +10,5 @@ message Feed{
     int32 rating = 5;
     int32 level = 6;
     int32 solved = 7;
+    repeated string analyzed_tag = 8;
 };

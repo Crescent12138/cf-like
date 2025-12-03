@@ -103,9 +103,11 @@ int main(int argc, char* argv[]) {
     // problemset 更新改为2小时一次，避免频繁请求CF API (2*60*60*1000 = 7200000ms)
     // 必须是steps(1000)的倍数，所以使用7200000
     
-    time_wheel.createTimingEvent(86400000, suggest::cfProblemHandler.forceRefresh);
+    //time_wheel.createTimingEvent(86400000, suggest::cfProblemHandler.forceRefresh);
 
-    // time_wheel.createTimingEvent(7200000, suggest::cfProblemHandler.forceRefresh);
+    //time_wheel.createTimingEvent(300000, suggest::cfProblemHandler.forceRefresh);
+
+    time_wheel.createTimingEvent(7200000, suggest::cfProblemHandler.forceRefresh);
 
     // Generally you only need one Server.
     brpc::Server server;

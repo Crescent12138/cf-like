@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <ctime>
 #include <fstream>
+#include <cstdlib>
 #include <butil/logging.h>
 #include <json2pb/rapidjson.h>
 
@@ -9,7 +10,7 @@ namespace suggest{
     
 std::shared_ptr<CfProblems> CfProblemHandler::list_ptr = nullptr;
 
-const std::string CfProblems::PROBLEMS_FILE_PATH = "cf_problems_cache.json";
+const std::string CfProblems::PROBLEMS_FILE_PATH = std::string(getenv("HOME")) + "/cf-like/cf_problems_cache.json";
 
 bool CfProblems::LoadFromLocalFile() {
     if (!utils::FileUtils::FileExists(PROBLEMS_FILE_PATH)) {
@@ -148,6 +149,9 @@ void CfProblems::ParseProblemsFromJson(const butil::rapidjson::Value& problems,
         std::vector<std::string> tags;
         utils::get_rapidjon_vector_string(problems[i], "tags", tags);
         
+        std::vector<std::string> analyzed_tags;
+        utils::get_rapidjon_vector_string(problems[i], "analyzed_tags", analyzed_tags);
+        
         feed.set_id(problem_ID);
         feed.set_title(name);
         feed.set_rating(rating);
@@ -161,6 +165,10 @@ void CfProblems::ParseProblemsFromJson(const butil::rapidjson::Value& problems,
         
         for (const auto& tag : tags) {
             feed.add_tag(tag);
+        }
+        
+        for (const auto& analyzed_tag : analyzed_tags) {
+            feed.add_analyzed_tag(analyzed_tag);
         }
         
         const std::string problem_url =
@@ -226,6 +234,14 @@ bool CfProblems::SaveToLocalFile() {
                 butil::rapidjson::Value(problem.tag(i).c_str(), allocator), allocator);
         }
         prob_obj.AddMember("tags", tags_array, allocator);
+        
+        // 添加analyzed_tags数组
+        butil::rapidjson::Value analyzed_tags_array(butil::rapidjson::kArrayType);
+        for (int i = 0; i < problem.analyzed_tag_size(); i++) {
+            analyzed_tags_array.PushBack(
+                butil::rapidjson::Value(problem.analyzed_tag(i).c_str(), allocator), allocator);
+        }
+        prob_obj.AddMember("analyzed_tags", analyzed_tags_array, allocator);
         
         problems.PushBack(prob_obj, allocator);
         

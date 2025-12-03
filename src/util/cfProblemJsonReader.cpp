@@ -2,11 +2,12 @@
 #include <butil/logging.h>
 #include <json2pb/rapidjson.h>
 #include <sys/stat.h>
+#include <cstdlib>
 #include "util/jsonUtils.h"
 
 namespace suggest {
 
-const std::string CfProblemJsonReader::DEFAULT_CACHE_FILE = "cf_problems_cache.json";
+const std::string CfProblemJsonReader::DEFAULT_CACHE_FILE = std::string(getenv("HOME")) + "/cf-like/cf_problems_cache.json";
 
 std::vector<std::shared_ptr<Feed>> CfProblemJsonReader::LoadAllProblems() {
     return LoadProblemsFromFile(DEFAULT_CACHE_FILE);
